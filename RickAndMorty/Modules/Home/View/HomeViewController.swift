@@ -87,21 +87,19 @@ extension HomeViewController {
             .receive(on: RunLoop.main)
             .dropFirst()
             .sink { [weak self] error in
-                guard let strongSelf = self else {
-                    return
-                }
-                if let error = error,
-                    !error.isBlank() {
-                    Toast(
-                        text: error,
-                        container: nil,
-                        viewController: strongSelf,
-                        direction: .bottom,
-                        shouldAddExtraBottomMargin: true
-                    )
-                }
-                strongSelf.viewModel.errorMessage = nil
-                ErrorOverlay.showErrorOverlay(in: strongSelf.view)
+                guard let self = self,
+                let error = error,
+                !error.isBlank() else { return }
+                
+                Toast(
+                    text: error,
+                    container: nil,
+                    viewController: self,
+                    direction: .bottom,
+                    shouldAddExtraBottomMargin: true
+                )
+                ErrorOverlay.showErrorOverlay(in: self.view)
+                self.viewModel.errorMessage = nil
             }
             .store(in: &cancellables)
         

@@ -56,23 +56,22 @@ extension DetailCharacterViewController {
         viewModel.$errorMessage
             .receive(on: RunLoop.main)
             .sink { [weak self] error in
-                guard let strongSelf = self else {
-                    return
-                }
-                if let error = error,
-                   !error.isBlank() {
-                    Toast(
-                        text: error,
-                        container: nil,
-                        viewController: strongSelf,
-                        direction: .bottom,
-                        shouldAddExtraBottomMargin: true
-                    )
-                    ErrorOverlay.showErrorOverlay(in: strongSelf.view)
-                }
-                strongSelf.viewModel.errorMessage = nil
+                guard let self = self,
+                let error = error,
+                !error.isBlank() else { return }
+                
+                Toast(
+                    text: error,
+                    container: nil,
+                    viewController: self,
+                    direction: .bottom,
+                    shouldAddExtraBottomMargin: true
+                )
+                ErrorOverlay.showErrorOverlay(in: self.view)
+                self.viewModel.errorMessage = nil
             }
             .store(in: &cancellables)
+
         
         viewModel.$isLoading
             .receive(on: RunLoop.main)
